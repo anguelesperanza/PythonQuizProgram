@@ -1,232 +1,222 @@
-import linecache    
+import os # Used for finding the proper path and working file directory (cwd)
+import linecache # Used for reading specific lines from the text files
 
-# This is a simple python program to help with making a quiz application
-# I hope this works. I'm not good with pythonn so I hope it will be easier to do than in Java
+exitMainGameLoop = False # Be the main loop for the program. If this is equal to true, the program ends
+cwd = os.getcwd() # Get's the programs working directory
+print()
+print("Welcome to this python quiz. Would you like to play or make your own quiz? (Please Select a number)")
+print("1. Play ")
+print("2. Make")
+print("3. About")
+gameMode = input()
 
-# This program will be broken down into four stages:
-# Stage One (COMPLETED): Get a simple functioning quiz program 
-# Stage Two (COMPLETED): Get quiz to work with premade quiz questions from a file 
-# Stage Three (COMPLETED): Get program to save custom quiz sets 
-# Stage Four (CURRENT): Give program a Graphical User Interface (Gui)
-# Stage Five (): Make sure the progrem runs as it's intended
+userInput = "n"
 
-# Game loop, used for when the quiz starts
-exit = False
+if gameMode == "1":
 
-# the name of the text file I want to read. Will be able to be changed by the user to select quizes
-fileName = ""
+    while exitMainGameLoop == False:
 
-#
-#   LOOPS
-#
-# Counts how many times the loop is run. When it's hits the number specified in the first line, the program ends.
-loop = 1;
-
-# Counts how many times the loop for making quiz questions is run. Ends loop after the number has been reached
-qMakingLoop = 1;
-
-# Counts how many times the inner loop for making quiz questions is run. Ends loop after the number has been reached
-innerQMakingLoop = 1;
+        userInput = ""
+        print()
+        print("Now in quiz play mode")
+        print()
 
 
-# Points to be displayed to the user
-points = 0
+        currentQuestionSet = []
 
-# Used for the correct answer. Checks with user input.
-userAnswer = ""
-rightAnswer = ""
+        fileIndex = 1
 
-# Used to tell which line is to be read --- Starts off on One and NOT ZERO
-line = 2;
+        files = []
+        for entry in os.scandir(cwd + "\\Question Sets"): # Checks for the files inside of the Questions Sets folder which is located in the source folder of this program
+            if entry.is_file:
+                files.append(str(fileIndex) + ". " + entry.name) # Add the names of the files that has been found to the files[] list so it can be printed later in a neat fashion and displayed to the user
+                fileIndex = fileIndex + 1
 
-lineAnswer = 7
+        for doc in files: # Print out all of the files that has been found
+            print(doc)
 
-# Used to make sure when selecting the right answer, the answer for the proper question is choosen and not for the first questions set.
-numVar = 2
-
-# Used to get the number of the previously selected question
-prevSet = 0;
-
-
-gameChoice = ""
-
-# Block of text the user sees when the program first runs
-print("")
-print("Hello, Welcome to a quiz program made in python: ")
-gameChoice = input("Would you like to play or make your own questions? (p/m) ")
-print("")
+        print()
+        print("Here are your available quizes")
+        fileName = input("Please choose the number next to your quiz to select it: ")
+        print()
 
 
-#
-# QUESTIN MAKING BLOCK
-#
-if gameChoice == "m":
-    gameChoice = ""
-    print("Welcome to the quiz making section of this program.")
-    print("Here you will be allowed to make questions with answers that can later be used in the play section of this quiz program.")
-    print("You can make any number of questions with any number of question sets (questions including answers) as long as the following format is followed.")
-    print("Total number of question sets you would like to make")
-    print("------------------------------------------------")
-    print("")
-    print("Total number of questions (must at the top and only needs to appear once)")
-    print("Question ")
-    print("1. Answer One")
-    print("2. Answer Two")
-    print("3. Answer Three")
-    print("4. Answer Four")
-    print("Actaual answer (must be exact copy of one of the answer choices)")
-    print("------------------------------------------------")
-    print("")
-    print("The format must be in this order or else the program will crash.")
-    print("There are no spaces in the questions. Everything must be line by line")
-    print("DO NOT WORRY: The program will ask you a few questions. As long as you supply the proper answers, the program will format the text file for you with your responses.")
-    print("If you wish, you do not need to use this program to make the quiz questions.")
-    print("If you choose not to use this program for quiz making questionss, the above format is needed.")
-    print("Now, time to begin making questions")
-    print("")
-
-    fileName = input("What would you like to call this file that will contain all of your questions? (include .txt in the file name)")
 
 
-    gameChoice = input("How many questions would you like to have?")
-    questionSetNumber = gameChoice
+        fileName = files[int(fileName) - 1]
+        fileName = fileName[3:] # Slices of '#. ' i.e '1. Random.txt' becomes 'Random.txt' This is done becomes the files do not have numbers attached to them like it is desplayed to the user.
+
+        i = 1 # For the while loop. Can be zero, but chose one so I don't have to do math more than I need to
+        line = 2 # Used for getting the proper lines to display to the user. These lines will be the question followed by it's respective answers.
+                #sThe line number and the answer number will not be displayed. And only one questions/answer will show at a time
 
 
-    while(qMakingLoop <= int(questionSetNumber)):
-        questionString = input("What is the question? ")
-        properAnswerChoice = input("What is the proper answer to the question? ")
-        fakeQuestionOne = input("Please enter a fake answer. ")
-        fakeQuestionTwo = input("Please enter another fake answer. ")
-        fakeQuestionThree = input("Please enter a third fake answer. ")
-        fakeQuestionFour = input("Please enter a fourth fake answer. ")
+        rightAnswerLine = 7 # This is the line number for the right answer (The first one)
 
-        if innerQMakingLoop == 1:
-            with open(fileName, 'a+') as f:
-                f.write(questionSetNumber + "\n")
-                f.write(questionString + "\n")
-                f.write(fakeQuestionOne + "\n")
-                f.write(fakeQuestionTwo + "\n")
-                f.write(fakeQuestionThree + "\n")
-                f.write(fakeQuestionFour + "\n")
-                f.write(properAnswerChoice + "\n")
-                innerQMakingLoop = innerQMakingLoop + 1
+        while i <= int(linecache.getline(cwd + "/Question Sets/" + fileName, 1)): # Get's the first line of the file and converts it to an int
+            print()
+            print(linecache.getline(cwd + "/Question Sets/" + fileName, line)) # This line will show the question being asked
+            line = line + 1
+            print(linecache.getline(cwd + "/Question Sets/" + fileName, line)) # This line will display answer choice one
+            line = line + 1
+            print(linecache.getline(cwd + "/Question Sets/" + fileName, line)) # This line will display answer choice Two
+            line = line + 1
+            print(linecache.getline(cwd + "/Question Sets/" + fileName, line)) # This line will display answer choice Three
+            line = line + 1
+            print(linecache.getline(cwd + "/Question Sets/" + fileName, line)) # This line will display answer choice Four
+
+            rightAnswer = linecache.getline(cwd + "/Question Sets/" + fileName, rightAnswerLine) # Sets the rightAnswer to the proper line. Python doesn't read the line if this isn't done this way
+
+            userInput = ""
+            userInput = input("Which is the right answer? (Please select the number you want)")
+
+
+
+            # These were type casted to int as leaving them as strings would cause an error. Even if the right answre was chosen, it woud still be wrong
+            # Having them as int fixes that problem.
+            userInput = int(userInput)
+            rightAnswer = int(rightAnswer)
+
+            print("The right answer is {}".format(rightAnswer))
+
+            if userInput == rightAnswer:
+                print("{} is the right answer!".format(userInput))
+                print("Moving on to the next question")
+                line = line + 2
+                rightAnswerLine = rightAnswerLine + 6
+                i = i + 1
+            else:
+                print("{} is not the right answer.".format(userInput))
+                print("Moving on to the next question")
+                line = line + 2
+                rightAnswerLine = rightAnswerLine + 6
+                i = i + 1
+
+        userInput = ""
+        exitMainGameLoop = True
+
+elif gameMode == "2":
+
+    while exitMainGameLoop == False:
+
+        question = " " # This will store the question
+        i = 1 # Used for iterating through while loop that creates the question sets
+        j = 0 # Used for iterating thorugh the while loop that stores and saves the answers
+        answerList = [0, 0, 0, 0] # Going to store the answers to the questions
+
+
+        filesInDir = []
+        for entry in os.scandir(cwd + "/Question Sets"):
+            if entry.is_file:
+                filesInDir.append(entry.name)
+
+        for f in filesInDir:
+            print(f)
+
+
+        fileName = input("Please enter the name of this Question Set: ")
+        fileName = fileName + ".txt" # This will make sure the file created is a text file by adding .txt to fileName
+        path = os.path.exists(cwd + "/Question Sets/" + fileName) # This will be used to see if the file has already been created when writing the questions to the file.
+
+
+
+
+        if path == True: # checks if the user wants to rewrite an existing file
+            userInput = input("'{}' already exists. Do you wish to rewrite it? ( y / n)".format(fileName))
+
+            # check what the user types then runs the proper message. This only runs if path == True
+            if userInput == "y":
+                print("The file has been overwritten")
+                numberOfQuestions = input("How many questions do you want? ") # Asks for the number of desired questions
+                numberOfQuestions = int(numberOfQuestions) # Converts the string into and int (integer)
+                with open("Question Sets/" + fileName, 'w') as f: # Writes the number of questiosn to the file before the loop begins
+                    f.write(str(numberOfQuestions) + "\n")
+
+            elif userInput == "n":
+                print("The file will not be overwritten")
+            else:
+                print("You did not either 'y'  or 'n'. The program will now close.")
+                quit()
+
         else:
-            with open(fileName, 'a+') as f:
-                f.write(questionString + "\n")
-                f.write(fakeQuestionOne + "\n")
-                f.write(fakeQuestionTwo + "\n")
-                f.write(fakeQuestionThree + "\n")
-                f.write(fakeQuestionFour + "\n")
-                f.write(properAnswerChoice + "\n")
-
-
-        qMakingLoop = qMakingLoop + 1;
-
-#
-# QUIZ PLAYING BLOCK
-#
-elif gameChoice == "p":
+            with open("Question Sets/" + fileName, 'w') as f: # Writes the number of questiosn to the file before the loop begins
+                numberOfQuestions = input("How many questions do you want? ") # Asks for the number of desired questions
+                numberOfQuestions = int(numberOfQuestions) # Converts the string into and int (integer)
+                f.write(str(numberOfQuestions) + "\n")
 
 
 
-    print("Here you will be presented with a few basic questions with answers")
-    print("If you get the right answer, you will get a point, and move onto the next question.")
-    print("If you get the wrong answer, you will move onto the next question but will not get a point")
-    print("Please seledt the numbers next to the answer choices when deciding what answer you want")
-    print("If you enter anything other than an accepted number, it will count as a wrong answer")
-    print("")
-
-    # Prompts user for a 'y' or a 'n' to decide if the quiz is to start or not
-    choice = input("Are you ready? (y/n) ")
-
-    fileName = input("Enter the file name you wish to play from (include .txt): ")
-
-    # Used to decide what quiz quistion to display -- Currently moves to the next question and does not go back question
-    quizNumber = int(linecache.getline(fileName, 1))
-
-
-    if(choice == "y"):
-        print("Let us begin")
-        print("")
-
-        # Quiz loop here ---- I'm not sure if I should move this here, or at an earlier point. Will stay here for now
-        while(exit == False):
-
-
-                if loop <= quizNumber:
-                    print(linecache.getline(fileName, line)) # Line 2
-                    line = line + 1;
-                    print(linecache.getline(fileName, line)) # Line 3
-                    line = line + 1;
-                    print(linecache.getline(fileName, line)) # Line 4
-                    line = line + 1;
-                    print(linecache.getline(fileName, line)) # Line 5
-                    line = line + 1;
-                    print(linecache.getline(fileName, line)) # Line 6
-                    line = line + 1;
-
-                    rightAnswer = linecache.getline(fileName, lineAnswer) # Line 7 (+ 6 after first loop)
-
-                    print("-------------DEBUG WINDOW-------------")
-                    print('The current right answer is: {}', rightAnswer)
+        while i <= numberOfQuestions:
+            userQuestion = input("Please enter your question: ") # Ask user for quesetion
 
 
 
-                    print("-------------END OF WINDOW-------------")
-                   
-                    # asks user to choose an answer. 
-                    userAnswer = input("Your answer is? ")
+            while j < len(answerList):
+                answerList[j] = input("What is your {} answer (Please make sure one of these contains the write answer)".format(j + 1)) # Promts the user to enter a new answer. Is stored in the answerList at index 'i'
+                answerList[j] = str(j + 1) + ". " + answerList[j]
+                j = j + 1 # Increases i by one each after you enter an aswer
 
-                    # converts the answer, which is a number, to an in and then sets the user's choice to the answer string answer they choose.
-                    # First checks to make sure user entered a valid input. This will prevent crashing if the user enters a character and not a number
-                    if userAnswer == "1" or userAnswer == "2" or userAnswer == "3" or userAnswer == "4":
-                        prevSet = int(userAnswer) + numVar;
-                        userAnswer =  linecache.getline(fileName, prevSet)
-                        if(userAnswer == rightAnswer):
-                            loop = loop + 1
-                            points = points + 1
-                            numVar = numVar + 6
-                            lineAnswer = lineAnswer + 6
-                            line = line + 1
-                        else:
-                            print("Wrong Answer")
-                            loop = loop + 1;
-                            print('Your answer is {}, the correct answer is'.format(userAnswer, rightAnswer))
-                            numVar = numVar + 6
-                            lineAnswer = lineAnswer + 6
-                            line = line + 1
+            for answer in answerList:
+                print(answer)
 
-                    else:
-                        print("Will not do conversion. Quiz will now exit")
-                        break
-                else:
-                    exit = True
-
-
-        print("---------------------RESULTS---------------------")
-        print("You have finished the quiz.")
-        print('You have {} points'.format(points))
-        print("Congragulations.")
+            rightAnswer = 0
+            rightAnswer = input("Which one of the answers above is the right answr? (please choose the number next to the question i.e '1' for {})".format(answerList[0])) # Ask the user to select the right answer
 
 
 
+            j = 0
+            if path == True: # If the file exists, and the player wants to rewrite it, remake it so it's empty then write the needed contents
+                if userInput == "y":
+                    with open(cwd + "/Question Sets/" + fileName, 'a+') as f:
+                        f.write(userQuestion + "\n") # Saves question
+                        for answer in answerList: # saves the answers in answerList to one line
+                            f.write(answerList[j] + "\n")
+                            j = j + 1
+                            userInput = "n" # change the user input to 'n' otherwise the file will be overwritten again for the second question
+                        f.write(rightAnswer + "\n") # Saves the number to the right answer.
+                elif userInput == "n":
+                    with open("Question Sets/" + fileName, 'a+') as f: # Creates a new file called 'test.txt' and uses append mode. Called f for naming convention
+                        f.write(userQuestion + "\n") # Saves question
+                        for answer in answerList: # saves the answers in answerList to one line
+                            f.write(answerList[j] + "\n")
+                            j = j + 1
+                        f.write(rightAnswer + "\n") # Saves the number to the right answer
 
-        
-    elif(choice == "n"):
-        print("When you are ready, please run the program again")
-    else:
-        print("Those are not progper commands. Please restart the quiz and use either 'y' or 'n' ")
+            else: # if the file doesn't exist, create it with the contents needed
+                with open("Question Sets/" + fileName, 'a+') as f: # Creates a new file called 'test.txt' and uses append mode. Called f for naming convention
+                    f.write(userQuestion + "\n") # Saves question
+                    for answer in answerList: # saves the answers in answerList to one line
+                        f.write(answerList[j] + "\n")
+                        j = j + 1
+                    f.write(rightAnswer + "\n") # Saves the number to the right answer
 
-else:
-    print("That is not an option. Please relaunch the program and choose either 'p' or 'm'")
+            j = 0
+
+            i = i + 1
+
+        i = 0
 
 
 
 
 
-print("")
-print("The contents of the file are: ")
-with open(fileName, 'r') as f:
-    print(f.read())
+
+        exitMainGameLoop = True # END OF MAIN GAME LOOP
+
+elif gameMode == "3":
+    print("Hello Everyone, I'm Anguel Esperanza, the developer of this small python script.")
+    print("I made this in the hopes that it can help me study while I'm at college.")
+    print("I figured I'd release this script and post it online in case anyone else wants to look at it, use it, or modify it.")
+    print("This isn't a feature packed script. All you can do is make questions sets, and play those questions sets.")
+    print("I would love to add more features in the future. I have plans to do so, however I'm going to need to learn more python before than.")
+    print("Making this was a lot of fun. I did my best to document the code so it's easy to understand.")
+    print("I hope you all enjoy this program and find it useful in your studies.")
+
+    print("----------------COPY RIGHT INFORMATION-----------------")
+    print("You are free to use this code in any project you want, both commerical and non-commercial use.")
+    print("I only ask that you give me credit and link to either one or both of the following links")
+    print("Github: ")
+    print("Pastebin: ")
+    print("These are the places that this soucre code has been published too. If this changes in the future, these links will be updated as such.")
 
 
