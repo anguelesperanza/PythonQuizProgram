@@ -215,8 +215,8 @@ elif gameMode == "3":
     print("----------------COPY RIGHT INFORMATION-----------------")
     print("You are free to use this code in any project you want, both commerical and non-commercial use.")
     print("I only ask that you give me credit and link to either one or both of the following links")
-    print("Github: ")
-    print("Pastebin: ")
+    print("Github: https://github.com/fictionalreality/PythonQuizProgram")
+    print("Pastebin: https://pastebin.com/zNW2VG1K")
     print("These are the places that this soucre code has been published too. If this changes in the future, these links will be updated as such.")
 
 
